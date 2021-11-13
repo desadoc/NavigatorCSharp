@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Navigator
@@ -40,9 +39,7 @@ namespace Navigator
 
         public IEnumerator<IObjectNavigationElement<T>> GetEnumerator()
         {
-            return GetValue()
-                .Select((_, index) => new IndexedCollectionNavigationElement<T>(this, index))
-                .GetEnumerator();
+            return new ObjectNavigationElementEnumerator<T>(this, GetValue().GetEnumerator());
         }
 
         IEnumerator IEnumerable.GetEnumerator()

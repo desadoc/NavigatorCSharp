@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Navigator
@@ -9,24 +8,20 @@ namespace Navigator
         : AbstractNavigationElement<IEnumerable<T>, T>, IObjectNavigationElement<T>
         where T : class
     {
+        private readonly T value;
         private readonly int index;
 
-        public IndexedCollectionNavigationElement(INavigationElement<IEnumerable<T>> parent, int index)
+        public IndexedCollectionNavigationElement(
+            INavigationElement<IEnumerable<T>> parent, T value, int index)
             : base(parent)
         {
+            this.value = value;
             this.index = index;
         }
 
-        protected override T GetValueFrom(IEnumerable<T> parentValue)
+        protected override T GetValueFrom(IEnumerable<T> _)
         {
-            try
-            {
-                return parentValue.ToArray()[index];
-            }
-            catch (IndexOutOfRangeException)
-            {
-                throw new InvalidNavigationException();
-            }
+            return value;
         }
 
         public IObjectNavigationElement<TProperty> For<TProperty>(Expression<Func<T, TProperty>> selector)
