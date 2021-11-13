@@ -4,16 +4,30 @@ using System.Linq.Expressions;
 
 namespace Navigator
 {
-    internal class NavigationElement<TParent, T> : AbstractSelectorNavigationElement<TParent, T>, IObjectNavigationElement<T>
+    internal class NavigationElement<TParent, T> : AbstractNavigationElement<TParent, T>, IObjectNavigationElement<T>
         where TParent : class
         where T : class
     {
+        private readonly Expression<Func<TParent, T>> selector;
+
         public NavigationElement(
             INavigationElement<TParent> parent,
             Expression<Func<TParent, T>> selector)
-            : base(parent, selector)
+            : base(parent)
         {
+            this.selector = selector;
+        }
 
+        protected override T GetValueFrom(TParent parentValue)
+        {
+            try
+            {
+                return selector.Compile().Invoke(parentValue);
+            }
+            catch (NullReferenceException)
+            {
+                throw new InvalidNavigationException();
+            }
         }
 
         public IObjectNavigationElement<TProperty> For<TProperty>(Expression<Func<T, TProperty>> selector)

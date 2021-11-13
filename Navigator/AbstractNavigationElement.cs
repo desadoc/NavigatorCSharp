@@ -1,24 +1,17 @@
-﻿using System;
-using System.Linq.Expressions;
-
-namespace Navigator
+﻿namespace Navigator
 {
-    internal abstract class AbstractSelectorNavigationElement<TParent, T>
+    public abstract class AbstractNavigationElement<TParent, T> : INavigationElement<T>
         where TParent : class
         where T : class
     {
         private readonly INavigationElement<TParent> parent;
-        private readonly Expression<Func<TParent, T>> selector;
 
-        private T value;
-
-        public AbstractSelectorNavigationElement(
-            INavigationElement<TParent> parent,
-            Expression<Func<TParent, T>> selector)
+        protected AbstractNavigationElement(INavigationElement<TParent> parent)
         {
             this.parent = parent;
-            this.selector = selector;
         }
+
+        protected abstract T GetValueFrom(TParent parentValue);
 
         public T GetValue()
         {
@@ -37,12 +30,6 @@ namespace Navigator
 
         public bool TryGetValue(out T value)
         {
-            if (this.value != default)
-            {
-                value = this.value;
-                return true;
-            }
-
             if (!parent.TryGetValue(out var parentValue))
             {
                 value = default;
@@ -51,11 +38,10 @@ namespace Navigator
 
             try
             {
-                this.value = selector.Compile().Invoke(parentValue);
-                value = this.value;
+                value = GetValueFrom(parentValue);
                 return true;
             }
-            catch (NullReferenceException)
+            catch (InvalidNavigationException)
             {
                 value = default;
                 return false;

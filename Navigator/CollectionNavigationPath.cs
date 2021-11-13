@@ -7,16 +7,30 @@ using System.Linq.Expressions;
 namespace Navigator
 {
     internal class CollectionNavigationPath<TParent, T>
-        : AbstractSelectorNavigationElement<TParent, IEnumerable<T>>, ICollectionNavigationElement<T>
+        : AbstractNavigationElement<TParent, IEnumerable<T>>, ICollectionNavigationElement<T>
         where TParent : class
         where T : class
     {
+        private readonly Expression<Func<TParent, IEnumerable<T>>> selector;
+
         public CollectionNavigationPath(
             INavigationElement<TParent> parent,
             Expression<Func<TParent, IEnumerable<T>>> selector)
-            : base(parent, selector)
+            : base(parent)
         {
+            this.selector = selector;
+        }
 
+        protected override IEnumerable<T> GetValueFrom(TParent parentValue)
+        {
+            try
+            {
+                return selector.Compile().Invoke(parentValue);
+            }
+            catch (NullReferenceException)
+            {
+                throw new InvalidNavigationException();
+            }
         }
 
         public ICollectionNavigationElement<T> When(Func<IEnumerable<T>, bool> predicate)
