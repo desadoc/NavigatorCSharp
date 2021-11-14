@@ -13,6 +13,7 @@ namespace Navigator.Tests
             var path = navigation.For(f => f.Bar.Kip).When(k => k == "Kip!");
 
             path.TryGetValue(out var _).Should().BeTrue();
+            path.GetValue().Should().Be("Kip!");
         }
 
         [Fact]
@@ -23,6 +24,7 @@ namespace Navigator.Tests
             var path = navigation.For(f => f.Bar.Kip).When(k => k != "Kip!");
 
             path.TryGetValue(out var _).Should().BeFalse();
+            path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
         }
 
         [Fact]
@@ -37,6 +39,22 @@ namespace Navigator.Tests
                 .When(k => k == "Kip!");
 
             path.TryGetValue(out var _).Should().BeTrue();
+            path.GetValue().Should().Be("Kip!");
+        }
+
+        [Fact]
+        public void When_CompositeNavigationAndPredicateIsFalse_IsValidIsFalse()
+        {
+            var root = new Foo();
+            var navigation = NavigationFactory.Create(root);
+            var path = navigation
+                .For(f => f.Bar)
+                .When(b => b != null)
+                .For(b => b.Kip)
+                .When(k => k == "Kop!");
+
+            path.TryGetValue(out var _).Should().BeFalse();
+            path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
         }
 
         public class Foo

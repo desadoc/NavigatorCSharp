@@ -22,10 +22,14 @@ namespace Navigator.Tests
 
             var root = NavigationFactory.Create(foo);
             var tets = root.ForEach(f => f.Bars)
-                .Select(bar => bar.For(b => b.Tet))
+                .Select(bar => bar.For(b => b.Tet));
+
+            tets.Should().OnlyContain(t => t.IsValid());
+
+            var kips = tets
                 .Select(tet => tet.GetValue());
 
-            tets.Should().BeEquivalentTo(new[]
+            kips.Should().BeEquivalentTo(new[]
             {
                 new Tet("First"), default, new Tet("Third")
             }, options => options.WithStrictOrdering());
@@ -45,14 +49,14 @@ namespace Navigator.Tests
             };
 
             var root = NavigationFactory.Create(foo);
-            var tets = root.ForEach(f => f.Bars)
+            var kips = root.ForEach(f => f.Bars)
                 .Select(bar => bar.For(b => b.Tet))
                 .Select(tet => tet.For(t => t.Kip))
                 .ToArray();
 
-            tets[0].GetValue().Should().Be("First");
-            tets[1].Invoking(t => t.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
-            tets[2].GetValue().Should().Be("Third");
+            kips[0].GetValue().Should().Be("First");
+            kips[1].Invoking(t => t.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
+            kips[2].GetValue().Should().Be("Third");
         }
 
         [Fact]

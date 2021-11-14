@@ -9,6 +9,7 @@ namespace Navigator.Tests
         public void TryGetValue_ValidNavigation_ReturnsTrueAndValue()
         {
             var root = new Foo();
+
             var path = NavigationFactory.Create(root)
                 .For(f => f.Bar.Tet.Kip);
 
@@ -18,9 +19,10 @@ namespace Navigator.Tests
         }
 
         [Fact]
-        public void TryGetValue_ValidCompositePath_CorrectValue()
+        public void TryGetValue_ValidCompositePath_ReturnsTrueAndValue()
         {
             var root = new Foo();
+
             var path = NavigationFactory.Create(root)
                 .For(f => f.Bar)
                 .For(b => b.Tet)
@@ -29,6 +31,43 @@ namespace Navigator.Tests
             var result = path.TryGetValue(out var valueResult);
             result.Should().BeTrue();
             valueResult.Should().Be("Kip!");
+        }
+
+        [Fact]
+        public void TryGetValue_InvalidNavigation_ReturnsFalseAndDefault()
+        {
+            var root = new Foo
+            {
+                Bar = default
+            };
+
+            var path = NavigationFactory.Create(root)
+                .For(f => f.Bar.Tet.Kip);
+
+            var result = path.TryGetValue(out var valueResult);
+            result.Should().BeFalse();
+            valueResult.Should().Be(default);
+        }
+
+        [Fact]
+        public void TryGetValue_InvalidCompositePath_ReturnsFalseAndDefault()
+        {
+            var root = new Foo
+            {
+                Bar = new Bar
+                {
+                    Tet = default
+                }
+            };
+
+            var path = NavigationFactory.Create(root)
+                .For(f => f.Bar)
+                .For(b => b.Tet)
+                .For(t => t.Kip);
+
+            var result = path.TryGetValue(out var valueResult);
+            result.Should().BeFalse();
+            valueResult.Should().Be(default);
         }
 
         private class Foo
