@@ -28,7 +28,7 @@ namespace Navigator.Tests
         }
 
         [Fact]
-        public void GetValue_InvalidNavigation_CorrectValue()
+        public void GetValue_InvalidNavigation_ThrowsException()
         {
             var root = new Foo { Bar = default };
             var path = NavigationFactory.Create(root)
@@ -38,7 +38,7 @@ namespace Navigator.Tests
         }
 
         [Fact]
-        public void GetValue_InvalidCompositeNavigation_CorrectValue()
+        public void GetValue_InvalidCompositeNavigation_ThrowsException()
         {
             var root = new Foo { Bar = default };
             var path = NavigationFactory.Create(root)

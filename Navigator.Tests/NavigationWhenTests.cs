@@ -12,7 +12,7 @@ namespace Navigator.Tests
             var navigation = NavigationFactory.Create(root);
             var path = navigation.For(f => f.Bar.Kip).When(k => k == "Kip!");
 
-            path.IsValid().Should().BeTrue();
+            path.TryGetValue(out var _).Should().BeTrue();
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace Navigator.Tests
             var navigation = NavigationFactory.Create(root);
             var path = navigation.For(f => f.Bar.Kip).When(k => k != "Kip!");
 
-            path.IsValid().Should().BeFalse();
+            path.TryGetValue(out var _).Should().BeFalse();
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Navigator.Tests
                 .For(b => b.Kip)
                 .When(k => k == "Kip!");
 
-            path.IsValid().Should().BeTrue();
+            path.TryGetValue(out var _).Should().BeTrue();
         }
 
         public class Foo

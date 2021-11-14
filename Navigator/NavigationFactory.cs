@@ -2,9 +2,9 @@
 {
     public class NavigationFactory
     {
-        public static IObjectNavigationElement<T> Create<T>(T value) where T : class
+        public static INavigation<T> Create<T>(T value)
         {
-            return new NavigationRoot<T>(value);
+            return new Implementation.NavigationRoot<T>(value);
         }
     }
 }
