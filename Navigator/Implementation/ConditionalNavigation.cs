@@ -22,5 +22,10 @@ namespace Navigator.Implementation
 
             throw new InvalidNavigationException();
         }
+
+        public override string GetPath()
+        {
+            return parent.GetPath();
+        }
     }
 }

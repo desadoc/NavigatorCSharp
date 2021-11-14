@@ -13,6 +13,7 @@ namespace Navigator.Tests
                 .For(f => f.Bar.Tet.Kip);
 
             path.GetValue().Should().Be("Kip!");
+            path.GetPath().Should().Be("Bar.Tet.Kip");
         }
 
         [Fact]
@@ -25,6 +26,7 @@ namespace Navigator.Tests
                 .For(t => t.Kip);
 
             path.GetValue().Should().Be("Kip!");
+            path.GetPath().Should().Be("Bar.Tet.Kip");
         }
 
         [Fact]
@@ -35,6 +37,7 @@ namespace Navigator.Tests
                 .For(f => f.Bar.Tet.Kip);
 
             path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
+            path.GetPath().Should().Be("Bar.Tet.Kip");
         }
 
         [Fact]
@@ -47,6 +50,7 @@ namespace Navigator.Tests
                 .For(t => t.Kip);
 
             path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
+            path.GetPath().Should().Be("Bar.Tet.Kip");
         }
 
         private class Foo

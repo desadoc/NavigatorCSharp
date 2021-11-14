@@ -13,5 +13,7 @@ namespace Navigator
 
         T GetValue();
         bool TryGetValue(out T value);
+
+        string GetPath();
     }
 }

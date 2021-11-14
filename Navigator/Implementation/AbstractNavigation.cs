@@ -36,5 +36,7 @@ namespace Navigator.Implementation
                 return false;
             }
         }
+
+        public abstract string GetPath();
     }
 }

@@ -19,5 +19,10 @@ namespace Navigator.Implementation
         {
             return item;
         }
+
+        public override string GetPath()
+        {
+            return $"{parent.GetPath()}[{index}]";
+        }
     }
 }

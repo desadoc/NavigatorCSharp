@@ -14,6 +14,7 @@ namespace Navigator.Tests
 
             path.TryGetValue(out var _).Should().BeTrue();
             path.GetValue().Should().Be("Kip!");
+            path.GetPath().Should().Be("Bar.Kip");
         }
 
         [Fact]
@@ -25,6 +26,7 @@ namespace Navigator.Tests
 
             path.TryGetValue(out var _).Should().BeFalse();
             path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
+            path.GetPath().Should().Be("Bar.Kip");
         }
 
         [Fact]
@@ -40,6 +42,7 @@ namespace Navigator.Tests
 
             path.TryGetValue(out var _).Should().BeTrue();
             path.GetValue().Should().Be("Kip!");
+            path.GetPath().Should().Be("Bar.Kip");
         }
 
         [Fact]
@@ -55,6 +58,7 @@ namespace Navigator.Tests
 
             path.TryGetValue(out var _).Should().BeFalse();
             path.Invoking(p => p.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
+            path.GetPath().Should().Be("Bar.Kip");
         }
 
         public class Foo

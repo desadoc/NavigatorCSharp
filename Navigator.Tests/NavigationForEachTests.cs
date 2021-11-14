@@ -26,12 +26,16 @@ namespace Navigator.Tests
 
             tets.Should().OnlyContain(t => t.IsValid());
 
-            var kips = tets
-                .Select(tet => tet.GetValue());
-
+            var kips = tets.Select(tet => tet.GetValue());
             kips.Should().BeEquivalentTo(new[]
             {
                 new Tet("First"), default, new Tet("Third")
+            }, options => options.WithStrictOrdering());
+
+            var paths = tets.Select(tet => tet.GetPath()).ToList();
+            paths.Should().BeEquivalentTo(new[]
+            {
+                "Bars[0].Tet", "Bars[1].Tet", "Bars[2].Tet",
             }, options => options.WithStrictOrdering());
         }
 
@@ -57,6 +61,12 @@ namespace Navigator.Tests
             kips[0].GetValue().Should().Be("First");
             kips[1].Invoking(t => t.GetValue()).Should().ThrowExactly<InvalidNavigationException>();
             kips[2].GetValue().Should().Be("Third");
+
+            var paths = kips.Select(k => k.GetPath()).ToList();
+            paths.Should().BeEquivalentTo(new[]
+{
+                "Bars[0].Tet.Kip", "Bars[1].Tet.Kip", "Bars[2].Tet.Kip",
+            }, options => options.WithStrictOrdering());
         }
 
         [Fact]
@@ -124,12 +134,21 @@ namespace Navigator.Tests
             var root = NavigationFactory.Create(goo);
             var kips = root.ForEach(g => g.Cars)
                 .SelectMany(car => car.ForEach(c => c.Tets))
-                .Select(tet => tet.For(t => t.Kip))
-                .Select(t => t.GetValue());
+                .Select(tet => tet.For(t => t.Kip));
 
-            kips.Should().BeEquivalentTo(new[]
+            kips.Select(t => t.GetValue()).Should().BeEquivalentTo(new[]
             {
                 "First", "Second", "Third", "Fourth", "Fifth"
+            }, options => options.WithStrictOrdering());
+
+            var paths = kips.Select(tet => tet.GetPath()).ToList();
+            paths.Should().BeEquivalentTo(new[]
+            {
+                "Cars[0].Tets[0].Kip",
+                "Cars[0].Tets[1].Kip",
+                "Cars[1].Tets[0].Kip",
+                "Cars[2].Tets[0].Kip",
+                "Cars[2].Tets[1].Kip",
             }, options => options.WithStrictOrdering());
         }
 

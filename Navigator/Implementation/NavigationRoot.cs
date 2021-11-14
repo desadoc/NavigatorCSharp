@@ -13,5 +13,10 @@
         {
             return value;
         }
+
+        public override string GetPath()
+        {
+            return string.Empty;
+        }
     }
 }
