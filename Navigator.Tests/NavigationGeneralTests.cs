@@ -21,8 +21,8 @@ namespace Navigator.Tests
                         {
                             Kips = new List<Kip>
                             {
-                                new Kip { Zuu = "Buu1" },
-                                new Kip { Zuu = "Buu2" },
+                                new Kip { Zuu = "Zuu1" },
+                                new Kip { Zuu = "Zuu2" },
                                 new Kip { Zuu = default },
                             }
                         },
@@ -30,9 +30,9 @@ namespace Navigator.Tests
                         {
                             Kips = new List<Kip>
                             {
-                                new Kip { Zuu = "Buu3" },
+                                new Kip { Zuu = "Zuu3" },
                                 default,
-                                new Kip { Zuu = "Buu4" },
+                                new Kip { Zuu = "Zuu4" },
                             }
                         }
                     },
@@ -42,8 +42,8 @@ namespace Navigator.Tests
                         {
                             Kips = new List<Kip>
                             {
-                                new Kip { Zuu = "Buu5" },
-                                new Kip { Zuu = "Buu6" },
+                                new Kip { Zuu = "Zuu5" },
+                                new Kip { Zuu = "Zuu6" },
                                 new Kip { Zuu = default },
                             }
                         },
@@ -51,22 +51,19 @@ namespace Navigator.Tests
                         {
                             Kips = new List<Kip>
                             {
-                                new Kip { Zuu = "Buu7" },
-                                new Kip { Zuu = "Buu8" },
+                                new Kip { Zuu = "Zuu7" },
+                                new Kip { Zuu = "Zuu8" },
                             }
                         },
                         Tet3 = new Tet
                         {
-                            Kips = new List<Kip>
-                            {
-                                new Kip { Zuu = "Buu9" },
-                            }
+                            Kips = default
                         }
                     }
                 }
             };
 
-            var zuus = NavigationFactory.Create(foo)
+            var navigation = NavigationFactory.Create(foo)
                 .ForEach(f => f.Bars)
                 .SelectMany(bar => new[]
                 {
@@ -76,11 +73,26 @@ namespace Navigator.Tests
                     .When(t => t.Kips != null && t.Kips.Count >= 3)
                     .ForEach(t => t.Kips))
                 .Select(kip => kip.For(k => k.Zuu))
-                .Select(buu => buu.TryGetValue(out var value) ? value : "Invalid");
+                .ToList();
+
+            var zuus = navigation
+                .Select(Zuu => Zuu.TryGetValue(out var value) ? value : "Invalid")
+                .ToList();
+
+            var paths = navigation
+                .Select(Zuu => Zuu.GetPath())
+                .ToList();
 
             zuus.Should().BeEquivalentTo(new[]
             {
-                "Buu1", "Buu2", null, "Buu3", "Invalid", "Buu4", "Buu5", "Buu6", null
+                "Zuu1", "Zuu2", null, "Zuu3", "Invalid", "Zuu4", "Zuu5", "Zuu6", null
+            }, options => options.WithStrictOrdering());
+
+            paths.Should().BeEquivalentTo(new[]
+            {
+                "Bars[0].Tet2.Kips[0].Zuu", "Bars[0].Tet2.Kips[1].Zuu", "Bars[0].Tet2.Kips[2].Zuu",
+                "Bars[0].Tet3.Kips[0].Zuu", "Bars[0].Tet3.Kips[1].Zuu", "Bars[0].Tet3.Kips[2].Zuu",
+                "Bars[1].Tet1.Kips[0].Zuu", "Bars[1].Tet1.Kips[1].Zuu", "Bars[1].Tet1.Kips[2].Zuu",
             }, options => options.WithStrictOrdering());
         }
 

@@ -17,9 +17,21 @@ namespace Navigator.Implementation
         {
             this.parent = parent;
             compiledPathExpression = pathExpression.Compile();
-            pathString = pathStringRegex
+            pathString = GetPathString(pathExpression);
+        }
+
+        private string GetPathString(Expression<Func<TParent, T>> pathExpression)
+        {
+            var groups = pathStringRegex
                 .Match(pathExpression.ToString())
-                .Groups.Values.ToArray()[1].ToString();
+                .Groups.Values.ToArray();
+
+            if (groups.Length != 2)
+            {
+                return string.Empty;
+            }
+
+            return groups[1].ToString();
         }
 
         public override T GetValue()
@@ -37,9 +49,13 @@ namespace Navigator.Implementation
         public override string GetPath()
         {
             var parentPath = parent.GetPath();
-            return string.IsNullOrEmpty(parentPath)
-                ? pathString
-                : string.Join('.', new[] { parentPath, pathString });
+
+            if (!string.IsNullOrEmpty(parentPath) && !string.IsNullOrEmpty(pathString))
+            {
+                return string.Join('.', new[] { parentPath, pathString });
+            }
+
+            return $"{parentPath}{pathString}";
         }
     }
 }

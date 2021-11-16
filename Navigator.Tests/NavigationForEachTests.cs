@@ -152,6 +152,51 @@ namespace Navigator.Tests
             }, options => options.WithStrictOrdering());
         }
 
+        [Fact]
+        public void ForEach_CollectionOfCollection_CorrectValues()
+        {
+            var hoo = new Hoo
+            {
+                ManyTets = new List<IReadOnlyList<Tet>>
+                {
+                    new List<Tet>
+                    {
+                        new Tet("Kip1"),
+                        default,
+                        new Tet("Kip2"),
+                    },
+                    default,
+                    new List<Tet>
+                    {
+                        new Tet("Kip3"),
+                    },
+                }
+            };
+
+            var navigation = NavigationFactory.Create(hoo)
+                .ForEach(h => h.ManyTets)
+                .SelectMany(nestedList => nestedList.ForEach(n => n))
+                .Select(tet => tet.For(t => t.Kip));
+
+            var kips = navigation
+                .Select(kip => kip.TryGetValue(out var value) ? value : "Invalid")
+                .ToList();
+
+            var paths = navigation
+                .Select(n => n.GetPath())
+                .ToList();
+
+            kips.Should().BeEquivalentTo(new[]
+            {
+                "Kip1", "Invalid", "Kip2","Kip3",
+            }, options => options.WithStrictOrdering());
+
+            paths.Should().BeEquivalentTo(new[]
+            {
+                "ManyTets[0][0].Kip", "ManyTets[0][1].Kip", "ManyTets[0][2].Kip", "ManyTets[2][0].Kip",
+            }, options => options.WithStrictOrdering());
+        }
+
         private class Foo
         {
             public IReadOnlyList<Bar> Bars { get; set; }
@@ -180,6 +225,11 @@ namespace Navigator.Tests
         private class Car
         {
             public IReadOnlyList<Tet> Tets { get; set; }
+        }
+
+        private class Hoo
+        {
+            public IReadOnlyList<IReadOnlyList<Tet>> ManyTets { get; set; }
         }
     }
 }
