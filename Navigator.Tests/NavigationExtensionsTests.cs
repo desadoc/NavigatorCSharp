@@ -14,10 +14,16 @@ namespace Navigator.Tests
             var root = NavigationFactory.Create(foo);
             var path = root.For(f => f.Bar.Tet.Kip);
 
-            var selectResult = path.Select(kip => $"Selected: {kip}", () => "Not selected");
+            var selectResult = path.Select((_, value) => $"Selected: {value}", () => "Not selected");
             selectResult.Should().Be("Selected: Kip!");
 
-            selectResult = path.Select(kip => $"Selected: {kip}");
+            selectResult = path.Select(n => $"Selected: {n.GetValue()}", () => "Not selected");
+            selectResult.Should().Be("Selected: Kip!");
+
+            selectResult = path.Select((_, value) => $"Selected: {value}");
+            selectResult.Should().Be("Selected: Kip!");
+
+            selectResult = path.Select(n => $"Selected: {n.GetValue()}");
             selectResult.Should().Be("Selected: Kip!");
         }
 
@@ -32,10 +38,16 @@ namespace Navigator.Tests
             var root = NavigationFactory.Create(foo);
             var path = root.For(f => f.Bar.Tet.Kip);
 
-            var selectResult = path.Select(kip => $"Selected: {kip}", () => "Not selected");
+            var selectResult = path.Select((_, value) => $"Selected: {value}", () => "Not selected");
             selectResult.Should().Be("Not selected");
 
-            selectResult = path.Select(kip => $"Selected: {kip}");
+            selectResult = path.Select(n => $"Selected: {n.GetValue()}", () => "Not selected");
+            selectResult.Should().Be("Not selected");
+
+            selectResult = path.Select((_, value) => $"Selected: {value}");
+            selectResult.Should().Be(default);
+
+            selectResult = path.Select(n => $"Selected: {n.GetValue()}");
             selectResult.Should().Be(default);
         }
 
@@ -47,7 +59,7 @@ namespace Navigator.Tests
             var root = NavigationFactory.Create(foo);
             var path = root.For(f => f.Bar.Tet.Kip);
 
-            path.Invoking(p => p.Consume(kip =>
+            path.Invoking(p => p.Consume((n, value) =>
             {
                 throw new Exception("Then called");
             }, () =>
@@ -55,7 +67,20 @@ namespace Navigator.Tests
                 throw new Exception("OrElse called");
             })).Should().ThrowExactly<Exception>().WithMessage("Then called");
 
-            path.Invoking(p => p.Consume(kip =>
+            path.Invoking(p => p.Consume(n =>
+            {
+                throw new Exception("Then called");
+            }, () =>
+            {
+                throw new Exception("OrElse called");
+            })).Should().ThrowExactly<Exception>().WithMessage("Then called");
+
+            path.Invoking(p => p.Consume((n, value) =>
+            {
+                throw new Exception("Then called");
+            })).Should().ThrowExactly<Exception>().WithMessage("Then called");
+
+            path.Invoking(p => p.Consume(n =>
             {
                 throw new Exception("Then called");
             })).Should().ThrowExactly<Exception>().WithMessage("Then called");
@@ -72,7 +97,7 @@ namespace Navigator.Tests
             var root = NavigationFactory.Create(foo);
             var path = root.For(f => f.Bar.Tet.Kip);
 
-            path.Invoking(p => p.Consume(kip =>
+            path.Invoking(p => p.Consume((n, value) =>
             {
                 throw new Exception("Then called");
             }, () =>
@@ -80,7 +105,20 @@ namespace Navigator.Tests
                 throw new Exception("OrElse called");
             })).Should().ThrowExactly<Exception>().WithMessage("OrElse called");
 
-            path.Invoking(p => p.Consume(kip =>
+            path.Invoking(p => p.Consume(n =>
+            {
+                throw new Exception("Then called");
+            }, () =>
+            {
+                throw new Exception("OrElse called");
+            })).Should().ThrowExactly<Exception>().WithMessage("OrElse called");
+
+            path.Invoking(p => p.Consume((n, value) =>
+            {
+                throw new Exception("Then called");
+            })).Should().NotThrow();
+
+            path.Invoking(p => p.Consume(n =>
             {
                 throw new Exception("Then called");
             })).Should().NotThrow();

@@ -2,16 +2,16 @@
 {
     internal class NavigationRoot<T> : AbstractNavigation<T>
     {
-        private readonly T value;
+        private readonly T subject;
 
-        public NavigationRoot(T value)
+        public NavigationRoot(T subject)
         {
-            this.value = value;
+            this.subject = subject;
         }
 
         public override T GetValue()
         {
-            return value;
+            return subject;
         }
 
         public override string GetPath()
