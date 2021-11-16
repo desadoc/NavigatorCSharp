@@ -20,7 +20,7 @@ namespace Navigator.Implementation
             pathString = GetPathString(pathExpression);
         }
 
-        private string GetPathString(Expression<Func<TParent, T>> pathExpression)
+        private static string GetPathString(Expression<Func<TParent, T>> pathExpression)
         {
             var groups = pathStringRegex
                 .Match(pathExpression.ToString())
