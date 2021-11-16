@@ -66,7 +66,7 @@ namespace Navigator.Tests
                 }
             };
 
-            var buus = NavigationFactory.Create(foo)
+            var zuus = NavigationFactory.Create(foo)
                 .ForEach(f => f.Bars)
                 .SelectMany(bar => new[]
                 {
@@ -78,7 +78,7 @@ namespace Navigator.Tests
                 .Select(kip => kip.For(k => k.Zuu))
                 .Select(buu => buu.TryGetValue(out var value) ? value : "Invalid");
 
-            buus.Should().BeEquivalentTo(new[]
+            zuus.Should().BeEquivalentTo(new[]
             {
                 "Buu1", "Buu2", null, "Buu3", "Invalid", "Buu4", "Buu5", "Buu6", null
             }, options => options.WithStrictOrdering());
