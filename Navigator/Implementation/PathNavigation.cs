@@ -7,7 +7,7 @@ namespace Navigator.Implementation
 {
     internal class PathNavigation<TParent, T> : AbstractNavigation<T>
     {
-        private static readonly Regex pathStringRegex = new Regex(@".+=>.+?\.(.+)");
+        private static readonly Regex pathStringRegex = new(@".+=>.+?\.(.+)");
 
         private readonly INavigation<TParent> parent;
         private readonly Func<TParent, T> compiledPathExpression;

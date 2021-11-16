@@ -62,7 +62,7 @@ namespace Navigator
 
         public static bool Is<T>(this INavigation<T> navigation, Func<T, bool> predicate)
         {
-            return navigation.TryGetValue(out var value) ? predicate(value) : false;
+            return navigation.TryGetValue(out var value) && predicate(value);
         }
 
         public static bool IsValid<T>(this INavigation<T> navigation)
