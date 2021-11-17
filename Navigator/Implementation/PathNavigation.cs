@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
@@ -7,7 +6,7 @@ namespace Navigator.Implementation
 {
     internal class PathNavigation<TParent, T> : AbstractNavigation<T>
     {
-        private static readonly Regex pathStringRegex = new(@".+=>.+?\.(.+)");
+        private static readonly Regex pathStringRegex = new Regex(@".+=>.+?\.(.+)");
 
         private readonly INavigation<TParent> parent;
         private readonly Func<TParent, T> compiledPathExpression;
@@ -24,9 +23,9 @@ namespace Navigator.Implementation
         {
             var groups = pathStringRegex
                 .Match(pathExpression.ToString())
-                .Groups.Values.ToArray();
+                .Groups;
 
-            if (groups.Length != 2)
+            if (groups.Count != 2)
             {
                 return string.Empty;
             }
@@ -52,7 +51,7 @@ namespace Navigator.Implementation
 
             if (!string.IsNullOrEmpty(parentPath) && !string.IsNullOrEmpty(pathString))
             {
-                return string.Join('.', new[] { parentPath, pathString });
+                return string.Join(".", new[] { parentPath, pathString });
             }
 
             return $"{parentPath}{pathString}";
