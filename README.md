@@ -66,5 +66,5 @@ And you can use conditions to invalidate navigations:
 ```
   var foo = new Foo { Bar = new Bar { Prop = "Hey!" } };
   // Throws an InvalidNavigationException
-  var navigation = NavigationFactory.Create(foo).For(f => f.Bar.Prop).When(p => p == "Hey!").GetValue();
+  var navigation = NavigationFactory.Create(foo).For(f => f.Bar.Prop).When(p => p != "Hey!").GetValue();
 ```
