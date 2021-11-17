@@ -56,7 +56,10 @@ It also supports collections, `ForEach` returns an IEnumerable of navigations an
     .ForEach(m => m.SomeCollection)
     .Select(itemNavigation =>
     {
-      var itemString = itemNavigation.TryGetValue(out var itemValue) && itemValue != null ? itemValue  : "Nothing here";
+      var itemString = itemNavigation.TryGetValue(out var itemValue) && itemValue != null
+        ? itemValue
+        : "Nothing here";
+        
       return $"{itemNavigation.GetPath()}: {itemString}";
     })
     .ToArray();
