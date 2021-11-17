@@ -34,7 +34,7 @@ Basic example:
 Or using exception handling:
 ```
   // This is always safe
-  // And you can chain "For" calls
+  // And you can chain most calls on navigations
   var navigation = NavigationFactory.Create(foo).For(f => f.Bar).For(b => b.Prop);
   
   try
